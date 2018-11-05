@@ -21,5 +21,5 @@ cool new techniques, libraries and tools. Additionally, I'm interested in
 machine learning (especially in algorithms that work well with small samples)
 and statistics.
 
-You can find me at [GitHub](https://github.com/knorrfg) or write an 
-<a href="mailto:{{ knorr.felix@gmx.de | encode_email }}" >e-mail</a>
+You can find me at [GitHub](https://github.com/knorrfg) or write me an e-mail: 
+{{ site.email | mailObfuscate }}

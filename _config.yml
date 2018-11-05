@@ -14,7 +14,7 @@
 # You can create any custom variable you would like, and they will be accessible
 # in the templates via {{ site.myvariable }}.
 title: Felix' Blog
-email: your-email@example.com
+email: knorr.felix@gmx.de
 description: >- # this means to ignore newlines until "baseurl:"
     A blog about programming, science, and everything else that I might come up with
 baseurl: "" # the subpath of your site, e.g. /blog
@@ -22,12 +22,18 @@ url: "https://knorrfg.github.io" # the base hostname & protocol for your site, e
 logo: "/logo.png"
 locale: "en-us"
 mathjax: true
+# search_full_content: true
+category_archive_path: "/categories/#"
+# tag_archive_path: "/tags/#"
+disqus:
+      shortname: KnorrFG
 #twitter_username: jekyllrb
 #github_username:  jekyll
 
 # Build settings
 markdown: kramdown
-remote_theme: "mmistakes/so-simple-theme"
+# remote_theme: "mmistakes/so-simple-theme"
+theme: jekyll-theme-so-simple
 plugins:
   - jekyll-feed
 
@@ -46,12 +52,9 @@ plugins:
 
 defaults:
     - scope: 
-          path: "" # an empty string here means all files in the project 
+          path: "/_posts" # an empty string here means all files in the project 
           type: "posts" # previously `post` in Jekyll 2.2.  
       values:
           author:
               name: Felix G. Knorr
-
-
-gems:
-    - jekyll-email-protect
+          layout: page
