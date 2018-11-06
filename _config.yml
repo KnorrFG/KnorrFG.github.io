@@ -26,7 +26,7 @@ mathjax: true
 category_archive_path: "/categories/#"
 # tag_archive_path: "/tags/#"
 disqus:
-      shortname: KnorrFG
+      shortname: knorrfg-github-io
 #twitter_username: jekyllrb
 github_username: KnorrFG
 
