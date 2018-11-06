@@ -28,7 +28,7 @@ category_archive_path: "/categories/#"
 disqus:
       shortname: KnorrFG
 #twitter_username: jekyllrb
-#github_username:  jekyll
+github_username:  KnorrFG
 
 # Build settings
 markdown: kramdown
