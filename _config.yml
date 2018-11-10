@@ -29,7 +29,6 @@ disqus:
       shortname: knorrfg-github-io
 #twitter_username: jekyllrb
 github_username: KnorrFG
-
 # Build settings
 markdown: kramdown
 remote_theme: "mmistakes/so-simple-theme"
@@ -53,9 +52,15 @@ plugins:
 
 defaults:
     - scope: 
-          path: "/_posts" # an empty string here means all files in the project 
+          path: "_posts" # an empty string here means all files in the project 
           type: "posts" # previously `post` in Jekyll 2.2.  
       values:
           author:
               name: Felix G. Knorr
-          layout: page
+          layout: post
+          share: true
+
+footer_links:
+  - title: Feed
+    url: feed.xml
+icon: fas fa-rss-square

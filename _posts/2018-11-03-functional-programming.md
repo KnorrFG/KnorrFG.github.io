@@ -1,5 +1,4 @@
 --- 
-layout: post
 title: Functionalish Programming
 categories: programming
 --- 
@@ -28,11 +27,11 @@ early that it is a bad idea to make a function depend on a global variable.
 There are some rare cases where that might be a good idea, but generally it's
 not. If a function is pure, that is its output only depends on its input, and
 it does not change any sort of global state, like a display for example, then
-it's easy to test and reliable. Great. But wait, if we aren't allowed to to any
+it's easy to test and reliable. Great. But wait, if we aren't allowed to do any
 i/o because that's state change we cannot write any useful programs. So yeah,
 we should try to keep functions pure, but only where applicable.
 
-I want to showcase two bugs that costed me a lot of time:
+I want to showcase two bugs that cost me a lot of time:
 
 1. I used the "choose directory" dialog of a GUI-toolkit which did not only return
    the path of the selected folder, but also changed the programs working
@@ -45,7 +44,7 @@ I want to showcase two bugs that costed me a lot of time:
    [this](https://stackoverflow.com/questions/976882/shuffling-a-list-of-objects)
    is the first result when googling "python random shuffle" shows that I'm not
    the only one. Since in python, a function without return value simply returns
-   `None` there was no easy to catch error.
+   `None` there was no easily catchable error.
 
 Admittedly, both of those problems could have been prevented by reading the
 documentation more carefully, or at all in the second case, but avoiding this
