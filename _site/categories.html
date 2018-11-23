@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<!--
+    So Simple Jekyll Theme 3.1.1
+    Copyright 2013-2018 Michael Rose - mademistakes.com | @mmistakes
+    Free for personal and commercial use under the MIT license
+    https://github.com/mmistakes/so-simple-theme/blob/master/LICENSE
+-->
+<html lang="en-US" class="no-js">
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  
+
+  
+    <title>Felix&#39; Blog</title>
+    <meta name="description" content="A blog about programming, science, and everything else that I might come up with">
+    <link rel="canonical" href="http://localhost:4000/categories.html">
+  
+
+  <script>
+    /* Cut the mustard */
+    if ( 'querySelector' in document && 'addEventListener' in window ) {
+      document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + 'js';
+    }
+  </script>
+
+  <link rel="stylesheet" href="/assets/css/main.css">
+  <link rel="alternate" type="application/atom+xml" title="Felix&#39; Blog" href="/feed.xml">
+<!-- start custom head snippets -->
+
+<!-- insert favicons. use http://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+</head>
+
+
+  <body class="layout--categories  ">
+    <nav class="skip-links">
+  <h2 class="screen-reader-text">Skip links</h2>
+  <ul>
+    <li><a href="#primary-nav" class="screen-reader-shortcut">Skip to primary navigation</a></li>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+    
+  <div class="navigation-wrapper">
+    <a href="#menu-toggle" id="menu-toggle">Menu</a>
+    <nav id="primary-nav" class="site-nav animated drop">
+      <ul><li><a href="/">Home</a></li><li><a href="/about/">About</a></li><li><a href="/categories/">Categories</a></li></ul>
+    </nav>
+  </div><!-- /.navigation-wrapper -->
+
+
+    <header class="masthead">
+  <div class="wrap">
+    
+      <a href="/" class="site-logo" rel="home" title="Felix' Blog">
+        <img src="/logo.png" class="site-logo-img animated fadeInDown" alt="Felix' Blog">
+      </a>
+    
+    
+      <h1 class="site-title animated fadeIn"><a href="/">Felix' Blog</a></h1>
+      <p class="site-description animated fadeIn" itemprop="description">A blog about programming, science, and everything else that I might come up with</p>
+    
+  </div>
+</header><!-- /.masthead -->
+
+
+    <main id="main" class="main-content" aria-label="Content">
+  <article>
+    
+
+    <div class="page-wrapper">
+      <header class="page-header">
+        
+        
+          <h1 id="page-title" class="page-title"></h1>
+        
+      </header>
+      <div class="page-content">
+        
+
+
+<ul class="taxonomy-index">
+  
+  
+  
+    
+      
+        <li>
+          <a href="#programming">
+            <strong>programming</strong> <span class="taxonomy-count">2</span>
+          </a>
+        </li>
+      
+    
+  
+    
+      
+    
+  
+</ul>
+
+
+
+
+
+  
+    
+      <section id="programming" class="taxonomy-section">
+        <h2 class="taxonomy-title">programming</h2>
+        <div class="entries-list">
+          
+            
+
+<article class="entry h-entry">
+  <header class="entry-header">
+    <h3 class="entry-title p-name">
+      
+        <a href="/programming/2018/11/12/accessing-pandas-dataframes-with-sql-like-select-statements.html" rel="bookmark">Accessing pandas DataFrame using SQL-like select statements
+</a>
+      
+    </h3>
+    
+  </header>
+  
+    <div class="entry-excerpt p-summary">
+      
+        <p>Recently I was writing the following code:</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">processing_frame</span> <span class="o">=</span> \
+	 <span class="n">sl_results</span><span class="p">[</span><span class="n">sl_results</span><span class="o">.</span><span class="n">c</span> <span class="o">==</span> <span class="n">coi</span><span class="p">][[</span><span class="s">"subscript"</span><span class="p">,</span> <span class="s">"kappa"</span><span class="p">]]</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span>
+		<span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s">"kappa"</span><span class="p">:</span> <span class="s">"value"</span><span class="p">})</span>
+</code></pre></div></div>
+<p>Another piece of code that might look familiar to the habituated pandas user
+is:</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">my_frame</span><span class="p">[(</span><span class="n">my_frame</span><span class="o">.</span><span class="n">col1</span> <span class="o">==</span> <span class="n">a</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">my_frame</span><span class="o">.</span><span class="n">col2</span> <span class="o">==</span> <span class="n">b</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">my_frame</span><span class="o">.</span><span class="n">col3</span> <span class="o">&lt;</span> <span class="n">c</span><span class="p">)]</span>
+</code></pre></div></div>
+<p>Typing this kind of stuff is annoying, and it triggers me every time I write
+something like this. Ideally, this would look more like:</p>
+
+
+        <div class="more-link">
+          <a href="/programming/2018/11/12/accessing-pandas-dataframes-with-sql-like-select-statements.html">Read More</a>
+        </div>
+      
+    </div>
+  
+  
+    <footer class="entry-meta">
+      
+      <time class="entry-date dt-published" datetime="2018-11-12T00:00:00+01:00">November 12, 2018
+  </time>
+    </footer>
+  
+</article>
+
+          
+            
+
+<article class="entry h-entry">
+  <header class="entry-header">
+    <h3 class="entry-title p-name">
+      
+        <a href="/programming/2018/11/03/functional-programming.html" rel="bookmark">Functionalish Programming
+</a>
+      
+    </h3>
+    
+  </header>
+  
+    <div class="entry-excerpt p-summary">
+      
+        <p>There already is a myriad of blog posts on functional programming, with this
+post, I don’t try to give an introduction to it, but I want to highlight, how
+we can get inspirations from it, to improve our code. This is why the post is
+called “functionalish” programming, instead of “functional” programming.</p>
+
+
+        <div class="more-link">
+          <a href="/programming/2018/11/03/functional-programming.html">Read More</a>
+        </div>
+      
+    </div>
+  
+  
+    <footer class="entry-meta">
+      
+      <time class="entry-date dt-published" datetime="2018-11-03T00:00:00+01:00">November 3, 2018
+  </time>
+    </footer>
+  
+</article>
+
+          
+        </div>
+        <a href="#page-title" class="back-to-top">Back to Top &uarr;</a>
+      </section>
+    
+  
+
+  
+    
+  
+
+
+
+        
+      </div>
+    </div>
+  </article>
+</main>
+
+
+    <footer id="footer" class="site-footer">
+  <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+<div class="social-icons"><a class="social-icon" href="/feed.xml"><i class="fas fa-link fa-2x" title="Feed"></i></a></div><div class="copyright">
+    
+      <p>&copy; 2018 Felix' Blog. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://github.com/mmistakes/so-simple-theme" rel="nofollow">So Simple</a>.</p>
+    
+  </div>
+</footer>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+  <script src="/assets/js/main.min.js"></script>
+  <script src="https://use.fontawesome.com/releases/v5.0.12/js/all.js"></script>
+
+
+<!-- MathJax -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  </body>
+
+</html>

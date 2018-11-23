@@ -1,0 +1,371 @@
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.8.5">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2018-11-23T17:22:09+01:00</updated><id>http://localhost:4000/</id><title type="html">Felix’ Blog</title><subtitle>A blog about programming, science, and everything else that I might come up with</subtitle><entry><title type="html">Accessing pandas DataFrame using SQL-like select statements</title><link href="http://localhost:4000/programming/2018/11/12/accessing-pandas-dataframes-with-sql-like-select-statements.html" rel="alternate" type="text/html" title="Accessing pandas DataFrame using SQL-like select statements" /><published>2018-11-12T00:00:00+01:00</published><updated>2018-11-12T00:00:00+01:00</updated><id>http://localhost:4000/programming/2018/11/12/accessing-pandas-dataframes-with-sql-like-select-statements</id><content type="html" xml:base="http://localhost:4000/programming/2018/11/12/accessing-pandas-dataframes-with-sql-like-select-statements.html">&lt;p&gt;Recently I was writing the following code:&lt;/p&gt;
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;processing_frame&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; \
+	 &lt;span class=&quot;n&quot;&gt;sl_results&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;sl_results&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;c&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;coi&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;][[&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;subscript&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;kappa&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]]&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;rename&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;
+		&lt;span class=&quot;n&quot;&gt;columns&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;kappa&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;value&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;})&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;Another piece of code that might look familiar to the habituated pandas user
+is:&lt;/p&gt;
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;my_frame&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;my_frame&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;col1&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;a&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;my_frame&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;col2&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;b&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;my_frame&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;col3&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;c&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)]&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;Typing this kind of stuff is annoying, and it triggers me every time I write
+something like this. Ideally, this would look more like:&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;my_frame&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;col1&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;a&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;and&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;col2&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;b&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;and&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;col3&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;c&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;which is not supported by the python syntax. What can be done, however, is the
+following:&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;Select&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;subscript, kappa as value&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Where&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;f&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;c == {coi}&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;sl_results&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;In this post, I’ll walk you through the code that makes the upper statement
+possible. For the sake of clearness I will present some code pieces out of
+context. If you want to see them in context, you can 
+&lt;a href=&quot;/assets/code/panql.py&quot;&gt;download the code&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;Since the Select-part is easier, let’s focus on it first. The grammar looks
+like this:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Expr := &amp;lt;VariableDescription&amp;gt;[, &amp;lt;VariableDescription&amp;gt;, ...]
+VariableDescription := &amp;lt;name&amp;gt; [as &amp;lt;alias&amp;gt;]
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;name is a column name, and alias can be chosen freely. So lets see how we
+can parse such an expression.&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Select&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;Var&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;namedtuple&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;Var&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;name&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;alias&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;defaults&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;None&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,))&lt;/span&gt;
+
+    &lt;span class=&quot;o&quot;&gt;@&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;staticmethod&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;_to_var&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;expression&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;str&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Select&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Var&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;expression&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;strip&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;split&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot; as &quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+
+    &lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;__init__&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;instruction&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;str&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
+        &lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;vars&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;tuple&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;map&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Select&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;_to_var&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;instruction&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;split&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;,&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)))&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;First, in the &lt;code class=&quot;highlighter-rouge&quot;&gt;__init__()&lt;/code&gt; method, the string is split at the commas, and 
+the remaining parts should be
+either a column name or a substitution like “kappa as value”. These strings
+are mapped through the &lt;code class=&quot;highlighter-rouge&quot;&gt;_to_var()&lt;/code&gt; method. &lt;code class=&quot;highlighter-rouge&quot;&gt;Var&lt;/code&gt; is a &lt;a href=&quot;https://docs.python.org/3/library/collections.html#collections.namedtuple&quot;&gt;namedtuple&lt;/a&gt; that just
+stores the name and a possible substitution, which has a default value of
+&lt;code class=&quot;highlighter-rouge&quot;&gt;None&lt;/code&gt;, so it can be created by &lt;code class=&quot;highlighter-rouge&quot;&gt;Var(name, substitution)&lt;/code&gt; or just &lt;code class=&quot;highlighter-rouge&quot;&gt;Var(name)&lt;/code&gt;.
+Splitting &lt;code class=&quot;highlighter-rouge&quot;&gt;&quot;kappa as value&quot;&lt;/code&gt; at &lt;code class=&quot;highlighter-rouge&quot;&gt;&quot; as &quot;&lt;/code&gt; results in &lt;code class=&quot;highlighter-rouge&quot;&gt;[&quot;kappa&quot;, &quot;value&quot;]&lt;/code&gt; and
+splitting &lt;code class=&quot;highlighter-rouge&quot;&gt;&quot;kappa&quot;&lt;/code&gt; at &lt;code class=&quot;highlighter-rouge&quot;&gt;&quot; as &quot;&lt;/code&gt; results in &lt;code class=&quot;highlighter-rouge&quot;&gt;[&quot;kappa&quot;]&lt;/code&gt;. The resulting list can, in
+any case, be used as arguments for &lt;code class=&quot;highlighter-rouge&quot;&gt;Var&lt;/code&gt; using the asterisk. So for the string:
+&lt;code class=&quot;highlighter-rouge&quot;&gt;&quot;subscript, kappa as value&quot;&lt;/code&gt; &lt;code class=&quot;highlighter-rouge&quot;&gt;self.vars&lt;/code&gt; will be 
+&lt;code class=&quot;highlighter-rouge&quot;&gt;[Var(&quot;subscript&quot;), Var(&quot;kappa&quot;, &quot;value&quot;)]&lt;/code&gt;. In order to be able to use
+&lt;code class=&quot;highlighter-rouge&quot;&gt;Select(expression)(dataframe)&lt;/code&gt; the object needs a &lt;code class=&quot;highlighter-rouge&quot;&gt;__call__&lt;/code&gt; method. Completed
+it looks like this:&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Select&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;Var&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;namedtuple&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;Var&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;name&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;alias&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;defaults&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;None&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,))&lt;/span&gt;
+
+    &lt;span class=&quot;o&quot;&gt;@&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;staticmethod&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;_to_var&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;expression&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;str&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Select&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Var&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;expression&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;strip&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;split&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot; as &quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+
+    &lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;__init__&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;instruction&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;str&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
+        &lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;vars&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;tuple&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;map&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Select&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;_to_var&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;instruction&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;split&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;,&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)))&lt;/span&gt;
+
+    &lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;__call__&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;df&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pd&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;DataFrame&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pd&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;DataFrame&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;selected_frame&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;df&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;var&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;name&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;vars&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]]&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;selected_frame&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;rename&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;columns&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+            &lt;span class=&quot;n&quot;&gt;var&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;var&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;alias&lt;/span&gt;
+            &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;vars&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;var&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;alias&lt;/span&gt;
+        &lt;span class=&quot;p&quot;&gt;})&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;in the &lt;code class=&quot;highlighter-rouge&quot;&gt;__call__&lt;/code&gt; method we use the &lt;code class=&quot;highlighter-rouge&quot;&gt;Var.name&lt;/code&gt; attribute of all stored vars to
+select the columns from the DataFrame that is passed as parameter, and then
+rename those columns, for which we have an alias.&lt;/p&gt;
+
+&lt;p&gt;The &lt;code class=&quot;highlighter-rouge&quot;&gt;Where&lt;/code&gt; statement will work in a similar fashion, and we add a &lt;code class=&quot;highlighter-rouge&quot;&gt;Where&lt;/code&gt;
+method to be able to do something like
+&lt;code class=&quot;highlighter-rouge&quot;&gt;Select(expr).Where(filter_expr)(dataframe)&lt;/code&gt;&lt;/p&gt;
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Select&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+	&lt;span class=&quot;o&quot;&gt;...&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;Where&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;expr&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;str&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Callable&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pd&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;DataFrame&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pd&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;DataFrame&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]:&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;where_filter&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Where&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;expr&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+        &lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;inner_func&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;df&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pd&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;DataFrame&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pd&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;DataFrame&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+            &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;where_filter&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;df&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+
+        &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;inner_func&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;It simply creates a &lt;code class=&quot;highlighter-rouge&quot;&gt;Where&lt;/code&gt; filter object and returns a function that applies
+the filter and then passes the results to its own &lt;code class=&quot;highlighter-rouge&quot;&gt;__call__&lt;/code&gt; method.&lt;/p&gt;
+
+&lt;p&gt;So lets look at the &lt;code class=&quot;highlighter-rouge&quot;&gt;Where&lt;/code&gt; class, which is way more exciting.
+The &lt;code class=&quot;highlighter-rouge&quot;&gt;Where&lt;/code&gt; object must take a string like &lt;code class=&quot;highlighter-rouge&quot;&gt;&quot;col1 &amp;gt; 5 and col2 == 'value'&quot;&lt;/code&gt; and
+filter a DataFrame accordingly. We could try fiddling around with string
+splits, but handling all possible operators for all the possible data types
+will be hard. Python can already handle this kind of strings, there are
+functions like &lt;a href=&quot;https://docs.python.org/3/library/functions.html#eval&quot;&gt;eval&lt;/a&gt; and &lt;a href=&quot;https://docs.python.org/3/library/functions.html#exec&quot;&gt;exec&lt;/a&gt;. But we need to change the interpretation of
+the expression slightly. We want to change the &lt;code class=&quot;highlighter-rouge&quot;&gt;and&lt;/code&gt; to a &lt;code class=&quot;highlighter-rouge&quot;&gt;&amp;amp;&lt;/code&gt; and the &lt;code class=&quot;highlighter-rouge&quot;&gt;or&lt;/code&gt; to a 
+&lt;code class=&quot;highlighter-rouge&quot;&gt;|&lt;/code&gt;, also we need to change &lt;code class=&quot;highlighter-rouge&quot;&gt;col1&lt;/code&gt; to &lt;code class=&quot;highlighter-rouge&quot;&gt;my_frame.col1&lt;/code&gt;. This can be done using
+abstract syntax trees (AST).&lt;/p&gt;
+
+&lt;p&gt;But what is an AST? The easiest method to explain is an example. The following
+AST belongs to the expression: &lt;code class=&quot;highlighter-rouge&quot;&gt;&quot;col1 &amp;gt; 5 and col2 == 'value'&quot;&lt;/code&gt;:&lt;/p&gt;
+
+&lt;div style=&quot;text-align: center&quot;&gt;
+    &lt;img src=&quot;/assets/img/ast.png&quot; /&gt;
+&lt;/div&gt;
+
+&lt;p&gt;(BTW: this image was created using the 
+&lt;a href=&quot;https://vpyast.appspot.com/&quot;&gt;Python AST Visualizer&lt;/a&gt;)&lt;/p&gt;
+
+&lt;p&gt;This looks scary on first sight, but it’s really not that bad. Forget about the
+&lt;code class=&quot;highlighter-rouge&quot;&gt;Module&lt;/code&gt; and the &lt;code class=&quot;highlighter-rouge&quot;&gt;Expr&lt;/code&gt; nodes, those don’t matter here. It starts to get interesting
+at the &lt;code class=&quot;highlighter-rouge&quot;&gt;BoolOp&lt;/code&gt; node. This node represents the complete (boolean) expression
+above. At the upmost level it consists of an &lt;code class=&quot;highlighter-rouge&quot;&gt;and&lt;/code&gt; statement, which has two
+values, both of which are comparisons (the &lt;code class=&quot;highlighter-rouge&quot;&gt;Compare&lt;/code&gt; nodes). 
+The left comparison has the operation
+“greater than” encoded as &lt;code class=&quot;highlighter-rouge&quot;&gt;Gt&lt;/code&gt;, the left value is “col1” which is a node of type
+&lt;code class=&quot;highlighter-rouge&quot;&gt;Name&lt;/code&gt; with the id “col1” and the context (ctx) &lt;code class=&quot;highlighter-rouge&quot;&gt;Load&lt;/code&gt; (possible contexts are
+&lt;code class=&quot;highlighter-rouge&quot;&gt;Load&lt;/code&gt;, when a variable is accessed, &lt;code class=&quot;highlighter-rouge&quot;&gt;Store&lt;/code&gt;, when a value is assigned, and
+&lt;code class=&quot;highlighter-rouge&quot;&gt;Del&lt;/code&gt;, when it’s deleted). “Col1” is compared to 5, which is the first
+comparator. If we had used something like “1 &amp;lt; col1 &amp;lt; 10” the left value would
+be one, and there would be two comparators, “col1” and 10. The other compare
+node works the same. We will now manipulate the tree, and replace the &lt;code class=&quot;highlighter-rouge&quot;&gt;BoolOp&lt;/code&gt;
+with &lt;code class=&quot;highlighter-rouge&quot;&gt;BinOp&lt;/code&gt;s. A &lt;code class=&quot;highlighter-rouge&quot;&gt;BoolOp&lt;/code&gt; can have multiple values that are compared, a &lt;code class=&quot;highlighter-rouge&quot;&gt;BinOp&lt;/code&gt;
+can only compare two values. Therefore it is necessary to replace the single
+&lt;code class=&quot;highlighter-rouge&quot;&gt;BoolOp&lt;/code&gt; with nested &lt;code class=&quot;highlighter-rouge&quot;&gt;BinOp&lt;/code&gt;s like this:&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;A&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;and&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;B&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;and&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;C&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;and&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;D&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;A&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;B&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;C&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;D&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;The other thing we need to change is to transform “col1” to “dataframe.col1”.
+For this, we need to exchange the &lt;code class=&quot;highlighter-rouge&quot;&gt;Name&lt;/code&gt; nodes with an &lt;code class=&quot;highlighter-rouge&quot;&gt;Attribute&lt;/code&gt; node, which
+is used to get an attribute from an object. To do this we need to know the name
+of the object that has the attribute in the scope in which the tree is
+evaluated. That is easy though. It is the name of the parameter of
+&lt;code class=&quot;highlighter-rouge&quot;&gt;Where.__call__&lt;/code&gt;. So let’s look at the necessary code. First we need to create
+an AST based on an expression&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Where&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;__init__&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;expr&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;str&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;filtered_tree&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Where&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;TreeRewriter&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;df&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;visit&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ast&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;parse&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;expr&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;expression&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ast&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Expression&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;body&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;filtered_tree&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;body&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;value&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;ast&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;fix_missing_locations&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;expression&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+        &lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;compiled_expr&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;compile&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;expression&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;filename&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;&amp;lt;ast&amp;gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;mode&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;eval&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;ast.parse&lt;/code&gt; will create the tree from a string. Then the tree will rewritten. The 
+&lt;code class=&quot;highlighter-rouge&quot;&gt;&quot;df&quot;&lt;/code&gt; is the name, that the DataFrame will have in the evaluation context. Then
+the result is wrapped into an &lt;code class=&quot;highlighter-rouge&quot;&gt;Expression&lt;/code&gt; which is necessary to be able to use
+it in combination with &lt;a href=&quot;https://docs.python.org/3/library/functions.html#eval&quot;&gt;eval&lt;/a&gt; instead of &lt;a href=&quot;https://docs.python.org/3/library/functions.html#exec&quot;&gt;exec&lt;/a&gt;. Subsequently we call
+&lt;code class=&quot;highlighter-rouge&quot;&gt;ast.fix_missing_locations()&lt;/code&gt;. This is because we will have inserted new nodes
+that didn’t exist in the original tree. Every node needs to have a line and a
+column referenced to be able to know from which place in the source code it
+originated. Our newly created nodes won’t have valid values for these attributes,
+and &lt;code class=&quot;highlighter-rouge&quot;&gt;ast.fix_missing_locations()&lt;/code&gt; will fill them in for us. Then we call
+&lt;code class=&quot;highlighter-rouge&quot;&gt;compile&lt;/code&gt; on the tree. Additionally we pass the
+information, that we want to evaluate the expression instead of executing it 
+(which basically means that we want a value back),
+and a filename from which the tree was generated. Since we don’t have a file, we
+simply pass “&amp;lt;ast&amp;gt;” it could be anything though. We then store away the
+compiled expression for later use.&lt;/p&gt;
+
+&lt;p&gt;So let’s see how we can actually rewrite this tree. To do this we need a
+&lt;a href=&quot;https://en.wikipedia.org/wiki/Visitor_pattern&quot;&gt;visitor&lt;/a&gt; class. This class must have one method for every node type we want to
+manipulate, in our case &lt;code class=&quot;highlighter-rouge&quot;&gt;Name&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;BoolOp&lt;/code&gt;. The methods must be named
+“visit_&lt;Type&gt;&quot; and the class must be derived from `ast.NodeTransformer`. 
+These methods must then
+return the node that should replace the node that was provided as argument.&lt;/Type&gt;&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;TreeRewriter&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ast&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;NodeTransformer&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;__init__&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;mat_name&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
+            &lt;span class=&quot;nb&quot;&gt;super&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;__init__&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+            &lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;mat_name&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;mat_name&lt;/span&gt;
+
+        &lt;span class=&quot;c1&quot;&gt;# some stuff is missing here ...
+&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;visit_Name&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;node&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
+            &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ast&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;copy_location&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ast&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Attribute&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;
+                &lt;span class=&quot;n&quot;&gt;value&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ast&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Name&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;id&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;mat_name&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ctx&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ast&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Load&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()),&lt;/span&gt;
+                &lt;span class=&quot;n&quot;&gt;attr&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;node&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;id&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ctx&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ast&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Load&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()),&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;node&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+        &lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;visit_BoolOp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;node&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
+            &lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;generic_visit&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;node&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+            &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ast&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;copy_location&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;_nested_bin_op&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;
+                &lt;span class=&quot;n&quot;&gt;Select&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;TreeRewriter&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;_bool_op_replacement_type&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;node&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt;
+                &lt;span class=&quot;n&quot;&gt;node&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;values&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;node&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;The &lt;code class=&quot;highlighter-rouge&quot;&gt;visit_Name()&lt;/code&gt; method is straight forward: it returns an &lt;code class=&quot;highlighter-rouge&quot;&gt;ast.Attribute&lt;/code&gt; with a
+new value, which is the &lt;code class=&quot;highlighter-rouge&quot;&gt;DataFrame&lt;/code&gt;, that will be passed to &lt;code class=&quot;highlighter-rouge&quot;&gt;Where.__call__&lt;/code&gt;,
+and the attribute (&lt;code class=&quot;highlighter-rouge&quot;&gt;attr&lt;/code&gt;) will be the id of the &lt;code class=&quot;highlighter-rouge&quot;&gt;Name&lt;/code&gt; node, e.g. “col1”.
+Additionally we use &lt;code class=&quot;highlighter-rouge&quot;&gt;ast.copy_location&lt;/code&gt; to copy the location information from
+the old node to the new one.&lt;/p&gt;
+
+&lt;p&gt;The next method, &lt;code class=&quot;highlighter-rouge&quot;&gt;visit_BoolOp()&lt;/code&gt; is a little more complex. Since the node has
+children, that won’t be visited when we replace it, we have to call
+&lt;code class=&quot;highlighter-rouge&quot;&gt;self.generic_visit()&lt;/code&gt; on it first. &lt;code class=&quot;highlighter-rouge&quot;&gt;self.generic_visit()&lt;/code&gt; is inherited from
+&lt;code class=&quot;highlighter-rouge&quot;&gt;ast.NodeTransformer&lt;/code&gt;. Then we find the type for the new &lt;code class=&quot;highlighter-rouge&quot;&gt;BinOp&lt;/code&gt; via
+&lt;code class=&quot;highlighter-rouge&quot;&gt;Select.TreeRewriter._bool_op_replacement_type()&lt;/code&gt;, which is defined as follows:&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;o&quot;&gt;@&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;staticmethod&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;_bool_op_replacement_type&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;node&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ast&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;BitAnd&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;isinstance&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;node&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;op&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ast&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;And&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;\
+        &lt;span class=&quot;k&quot;&gt;else&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ast&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;BitOr&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;and then create the nested &lt;code class=&quot;highlighter-rouge&quot;&gt;BinOp&lt;/code&gt;s with &lt;code class=&quot;highlighter-rouge&quot;&gt;self._nested_bin_op()&lt;/code&gt; from the
+replacement type and the values of the provided &lt;code class=&quot;highlighter-rouge&quot;&gt;BoolOp&lt;/code&gt;.&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;_nested_bin_op&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;bop&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;values&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;bot_most&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ast&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;BinOp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;left&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;values&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt;
+                            &lt;span class=&quot;n&quot;&gt;right&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;values&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt;
+                            &lt;span class=&quot;n&quot;&gt;op&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;bop&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;())&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;current_top&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;bot_most&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;node&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;reversed&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;values&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[:&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]):&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;current_top&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ast&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;BinOp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;right&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;node&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+                                &lt;span class=&quot;n&quot;&gt;left&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;current_top&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+                                &lt;span class=&quot;n&quot;&gt;op&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;bop&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;current_top&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;we start constructing the subtree from the bottom. So for the example 
+&lt;code class=&quot;highlighter-rouge&quot;&gt;a and b and c and d&lt;/code&gt; we first create &lt;code class=&quot;highlighter-rouge&quot;&gt;c &amp;amp; d&lt;/code&gt; from there &lt;code class=&quot;highlighter-rouge&quot;&gt;b &amp;amp; (c &amp;amp; d)&lt;/code&gt; and then 
+&lt;code class=&quot;highlighter-rouge&quot;&gt;a &amp;amp; (b &amp;amp; (c &amp;amp; d))&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;Now, all that is missing is the application of the compiled tree which happens in
+the &lt;code class=&quot;highlighter-rouge&quot;&gt;Where.__call__()&lt;/code&gt; method:&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;__call__&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;df&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pd&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;DataFrame&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pd&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;DataFrame&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;filter_obj&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;eval&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;compiled_expr&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;df&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;filter_obj&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Again, you can download the complete code &lt;a href=&quot;/assets/code/panql.py&quot;&gt;here&lt;/a&gt;. Also if you
+want to find out more about the AST, or use it in your own projects, I recommend
+&lt;a href=&quot;https://greentreesnakes.readthedocs.io/en/latest/&quot;&gt;this tutorial&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;Using the code presented here is slightly slower than using pandas directly. So
+I would not recommend to use a &lt;code class=&quot;highlighter-rouge&quot;&gt;Select&lt;/code&gt; or a &lt;code class=&quot;highlighter-rouge&quot;&gt;Where&lt;/code&gt; inside a loop that is
+repeated thousands or millions of times.&lt;/p&gt;</content><author><name>Felix G. Knorr</name></author><category term="python" /><category term="pandas" /><category term="ast" /><summary type="html">Recently I was writing the following code: processing_frame = \ sl_results[sl_results.c == coi][[&quot;subscript&quot;, &quot;kappa&quot;]].rename( columns={&quot;kappa&quot;: &quot;value&quot;}) Another piece of code that might look familiar to the habituated pandas user is: my_frame[(my_frame.col1 == a) &amp;amp; (my_frame.col2 == b) &amp;amp; (my_frame.col3 &amp;lt; c)] Typing this kind of stuff is annoying, and it triggers me every time I write something like this. Ideally, this would look more like:</summary></entry><entry><title type="html">Functionalish Programming</title><link href="http://localhost:4000/programming/2018/11/03/functional-programming.html" rel="alternate" type="text/html" title="Functionalish Programming" /><published>2018-11-03T00:00:00+01:00</published><updated>2018-11-03T00:00:00+01:00</updated><id>http://localhost:4000/programming/2018/11/03/functional-programming</id><content type="html" xml:base="http://localhost:4000/programming/2018/11/03/functional-programming.html">&lt;p&gt;There already is a myriad of blog posts on functional programming, with this
+post, I don’t try to give an introduction to it, but I want to highlight, how
+we can get inspirations from it, to improve our code. This is why the post is
+called “functionalish” programming, instead of “functional” programming.&lt;/p&gt;
+
+&lt;p&gt;But before I can talk about what can be learned from it, it is necessary to
+talk about what functional programming actually is. Let’s see what Wikipedia
+has to say:&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;In computer science, functional programming is a programming paradigm - a style
+of building the structure and elements of computer programs - that treats
+computation as the evaluation of mathematical functions and avoids
+changing-state and mutable data.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;There are already two important principles in there:&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;Avoid changing state&lt;/li&gt;
+  &lt;li&gt;Avoid mutable data&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;The first one, avoiding state change, is a no brainer. Most of us learn very
+early that it is a bad idea to make a function depend on a global variable.
+There are some rare cases where that might be a good idea, but generally it’s
+not. If a function is pure, that is its output only depends on its input, and
+it does not change any sort of global state, like a display for example, then
+it’s easy to test and reliable. Great. But wait, if we aren’t allowed to do any
+i/o because that’s state change we cannot write any useful programs. So yeah,
+we should try to keep functions pure, but only where applicable.&lt;/p&gt;
+
+&lt;p&gt;I want to showcase two bugs that cost me a lot of time:&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;I used the “choose directory” dialog of a GUI-toolkit which did not only return
+the path of the selected folder, but also changed the programs working
+directory to the chosen folder. I was absolutely unaware of this second part,
+which way later in the program resulted in plugin-loading errors.&lt;/li&gt;
+  &lt;li&gt;I was using pythons random.shuffle() function. The code looked something
+like this: &lt;code class=&quot;highlighter-rouge&quot;&gt;shuffeled_elems = random.shuffle(elems)&lt;/code&gt;. This
+function shuffles its argument, it does not return a shuffled version of it.
+I was not aware of that, and the fact, that 
+&lt;a href=&quot;https://stackoverflow.com/questions/976882/shuffling-a-list-of-objects&quot;&gt;this&lt;/a&gt;
+is the first result when googling “python random shuffle” shows that I’m not
+the only one. Since in python, a function without return value simply returns
+&lt;code class=&quot;highlighter-rouge&quot;&gt;None&lt;/code&gt; there was no easily catchable error.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;Admittedly, both of those problems could have been prevented by reading the
+documentation more carefully, or at all in the second case, but avoiding this
+kind of behavior in your own functions will reduce the probability of errors,
+which is a good thing.&lt;/p&gt;
+
+&lt;p&gt;The second point, “Avoid mutable data”, is more controversial. In C++ it would
+translate to: only use &lt;code class=&quot;highlighter-rouge&quot;&gt;const&lt;/code&gt; variables, and in python it would translate to:
+don’t change a variable after its creation. 
+Of course, I don’t want to tell you to not use lists anymore. Since python
+lacks some important concepts that functional languages tend to have, like
+e.g. tail recursion, it would really not be wise to ban all mutability from your
+code. But still, I’d advice to use &lt;a href=&quot;https://docs.python.org/3.7/library/collections.html#collections.namedtuple&quot;&gt;namedtuple&lt;/a&gt;s or tuples whenever possible.
+If I had used a tuple instead of a list, I would have caught that second bug
+instantly.&lt;/p&gt;
+
+&lt;p&gt;Another important point in functional programming is to use functions as
+arguments, and return values. This does not come intuitively, but it can
+increase code readability a lot.&lt;/p&gt;
+
+&lt;p&gt;An example:&lt;/p&gt;
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;coords_of_interest&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pipe&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;mat_acc_map&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;shape&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;iter_3D_vol_coords&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; 
+                                             &lt;span class=&quot;nb&quot;&gt;filter&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;lambda&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;coord&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;mat_acc_map&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;coord&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;!=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt; 
+                                             &lt;span class=&quot;nb&quot;&gt;tuple&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;I guess two things need to be explained before this becomes clear:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;pipe&lt;/code&gt; is a function that takes anything as first argument, and then a bunch
+of functions for its varargs. It then feeds the first argument as input to the
+first function, the output of the first function as input to the second
+function, and so on, and in the end it will return the return value of the last
+function. (And in the above example, the input is a numpy array)&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;filter&lt;/code&gt; is curried, which means that if you call it with an incomplete set
+of arguments, it will return a function which only takes the remaining
+arguments, and remembers the one, that were already set. So if you have a
+curried version of &lt;code class=&quot;highlighter-rouge&quot;&gt;filter&lt;/code&gt; you can define a function that takes an iterable
+and only returns those elements that are even with 
+&lt;code class=&quot;highlighter-rouge&quot;&gt;even_only = filter(lambda x: x % 2 == 0)&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;(By the way, &lt;code class=&quot;highlighter-rouge&quot;&gt;pipe&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;filter&lt;/code&gt; are both defined in the awesome &lt;a href=&quot;https://toolz.readthedocs.io/en/latest/index.html&quot;&gt;toolz&lt;/a&gt; library)&lt;/p&gt;
+
+&lt;p&gt;So, provided the knowledge over &lt;code class=&quot;highlighter-rouge&quot;&gt;pipe&lt;/code&gt; and curried functions, the source code
+example above becomes quite easy to read: “the coordinates of interest are
+those coordinates where the value in the array is not zero”&lt;/p&gt;
+
+&lt;p&gt;The Code above also has another advantage which does not immediately become obvious.
+&lt;code class=&quot;highlighter-rouge&quot;&gt;iter_3D_vol_coords&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;filter&lt;/code&gt; both return generators. Which means every
+result is computed lazily, i.e. when it’s queried. So, &lt;code class=&quot;highlighter-rouge&quot;&gt;tuple&lt;/code&gt; looks at the
+first element, that &lt;code class=&quot;highlighter-rouge&quot;&gt;filter&lt;/code&gt; returns, then &lt;code class=&quot;highlighter-rouge&quot;&gt;filter&lt;/code&gt; looks at the first element,
+that is returned by &lt;code class=&quot;highlighter-rouge&quot;&gt;iter_3D_vol_coords&lt;/code&gt;, if it is suitable it will be
+returned, otherwise the next element will be tested. This avoids to first have
+a complete list of coordinates, and then filter it. In this example the
+difference isn’t too big, but in a lot of scenarios it can reduce the memory
+consumption by a lot. If you don’t know generators, I recommend 
+&lt;a href=&quot;https://stackoverflow.com/questions/231767/what-does-the-yield-keyword-do&quot;&gt;this&lt;/a&gt;
+answer on stackoverflow.&lt;/p&gt;
+
+&lt;p&gt;I want to conclude this post with a few rules of thumb, which I try to respect
+ as much as possible:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;write pure functions whenever possible&lt;/li&gt;
+  &lt;li&gt;use immutable types whenever possible, especially &lt;a href=&quot;https://docs.python.org/3.7/library/collections.html#collections.namedtuple&quot;&gt;namedtuple&lt;/a&gt; (you can also
+derive classes from it)&lt;/li&gt;
+  &lt;li&gt;use &lt;a href=&quot;https://toolz.readthedocs.io/en/latest/index.html&quot;&gt;toolz&lt;/a&gt;, especially &lt;code class=&quot;highlighter-rouge&quot;&gt;pipe&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;curry&lt;/code&gt; (but it also has a lot of other
+very convenient functions)&lt;/li&gt;
+  &lt;li&gt;use generators whenever possible&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Following these few rules has made my code safer, easier to read, easier to
+parallelize, and less RAM intensive.&lt;/p&gt;</content><author><name>Felix G. Knorr</name></author><summary type="html">There already is a myriad of blog posts on functional programming, with this post, I don’t try to give an introduction to it, but I want to highlight, how we can get inspirations from it, to improve our code. This is why the post is called “functionalish” programming, instead of “functional” programming.</summary></entry></feed>
