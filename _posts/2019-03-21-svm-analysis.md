@@ -3,30 +3,6 @@ title: How well can an SVM deal with noise and small samples?
 categories: Machine Learning 
 tags: python scikit-learn
 --- 
-<style>
-table.dataframe{
-    margin: 0;
-    font-family: "Helvetica", "Arial", sans-serif;
-    border-collapse: collapse;
-    border: none;
-    border: 2px solid #ccf;
-}   thead {
-    background-color: #cc8484;
-}   tbody tr:nth-child(even) {
-    background-color: #fff;
-}   tbody tr:nth-child(odd) {
-    background-color: #eee;
-}   td {
-    padding: .5em;
-}   th {
-    font-size: 125%;
-    text-align: center;
-}   caption {
-    caption-side: bottom;
-}   tbody tr:hover {
-    background-color: #add8e6;
-}</style>
-
 # Introduction
 What I do at my job is called "Multi Voxel Pattern Analysis" (MVPA). It involves
 applying classification algorithms to functional MRI (fMRI) data, i.e. recorded
@@ -95,6 +71,30 @@ decision function with the chosen parameters to the noisy data, and using the
 resulting classification accuracy.
 The following table contains the TILs for the linear dataset. The 2nd number in 
 the cell gives the 95% confidence interval from the 49 repetitions.
+
+<style>
+table.dataframe{
+    margin: 0;
+    font-family: "Helvetica", "Arial", sans-serif;
+    border-collapse: collapse;
+    border: none;
+    border: 2px solid #ccf;
+}   thead {
+    background-color: #cc8484;
+}   tbody tr:nth-child(even) {
+    background-color: #fff;
+}   tbody tr:nth-child(odd) {
+    background-color: #eee;
+}   td {
+    padding: .5em;
+}   th {
+    font-size: 125%;
+    text-align: center;
+}   caption {
+    caption-side: bottom;
+}   tbody tr:hover {
+    background-color: #add8e6;
+}</style>
 
 <div>
 <style scoped>
