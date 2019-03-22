@@ -4,6 +4,8 @@ title: About
 permalink: /about/
 ---
 
+# About me
+
 My name is Felix, I've got a diploma in computer science from the TU Dresden,
 Germany, and I'm currently doing my PhD in Neuroscience.
 
@@ -23,3 +25,14 @@ and statistics.
 
 You can find me at [GitHub](https://github.com/knorrfg) or write me an e-mail: 
 {{ site.email | mailObfuscate }}
+
+# My open source projects
+
+* **Pyparadigm** is a Pyhton library which allows to arrange and display visual
+  stimuli and react to user-input with minimal amounts of source code in a 
+  declarative manner.  
+  [GitHub](https://github.com/knorrfg/pyparadigm) [Doc](https://pyparadigm.readthedocs.org)
+
+* **Datasheet** is a python library which easily generates HTML pages containing
+  Markdown text, pandas tables, matplotlib figures and nifti images.  
+  [GitHub](https://github.com/knorrfg/datasheet) [Doc](https://datasheet.readthedocs.org)
