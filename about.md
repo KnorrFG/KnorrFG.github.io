@@ -6,9 +6,15 @@ permalink: /about/
 
 # About me
 
+<div style="text-align: justify">
+<img src="/assets/img/portrait.jpg" width="40%" height="40%"
+    style="float: right; padding-left: 1.5em; padding-top: 0.5em"/>
+
+<p>
 My name is Felix, I've got a diploma in computer science from the TU Dresden,
 Germany, and I'm currently doing my PhD in Neuroscience.
-
+</p>
+<p>
 I learned C when I was 16 years old and adopted to C++ shortly after that. As a
 student, I had a research assistant position for 2 years where I wrote
 different programs in C++ for video recording, compression, and some
@@ -17,12 +23,14 @@ analysis of electrical signals in animal nerves, and implemented a couple of
 time series analysis algorithms. During different practical works in the course
 of my study I worked a lot with Python, which I also have been using in my
 diploma thesis, and since in my PhD.
-
+</p>
+<p>
 My interests evolve a lot around improving as a programmer, including learning
 cool new techniques, libraries and tools. Additionally, I'm interested in
 machine learning (especially in algorithms that work well with small samples)
 and statistics.
-
+</p>
+</div>
 You can find me at [GitHub](https://github.com/knorrfg) or write me an e-mail: 
 {{ site.email | mailObfuscate }}
 
