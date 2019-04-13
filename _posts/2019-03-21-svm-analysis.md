@@ -1,9 +1,9 @@
 --- 
-title: How well can an SVM deal with noise and small samples? 
+title: How well can an SVM deal with noise and small samples?
 categories: MachineLearning 
 tags: python scikit-learn
+excerpt_separator: <!--more-->
 --- 
-# Introduction
 What I do at my job is called "Multi Voxel Pattern Analysis" (MVPA). It involves
 applying classification algorithms to functional MRI (fMRI) data, i.e. recorded
 brain-activity, to predict some parameter or a behavior. The classification
@@ -17,7 +17,9 @@ significant p-values, but not in a useful range to do any predictions. Also fMRI
 images are quite noisy and a lot of times a positive result becomes
 insignificant when evaluating it with previously unseen data. This generally
 made me a little suspicious as to how well an SVM can deal with these
-difficulties.
+difficulties.  
+
+<!--more-->
 
 Therefore I decided to investigate this a little bit. I generated artificial
 data using different sample sizes, numbers of features, noise levels and two

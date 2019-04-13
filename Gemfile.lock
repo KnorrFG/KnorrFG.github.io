@@ -111,6 +111,7 @@ PLATFORMS
 DEPENDENCIES
   jekyll
   jekyll-feed (~> 0.6)
+  jekyll-paginate
   jekyll-remote-theme
   jekyll-theme-so-simple
   tzinfo-data

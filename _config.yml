@@ -36,6 +36,10 @@ remote_theme: "mmistakes/so-simple-theme"
 plugins:
   - jekyll-feed
   - jekyll-remote-theme
+  - jekyll-paginate
+
+paginate: 10  # amount of posts to show per page
+paginate_path: /page:num/
 
 # Exclude from processing.
 # The following items will not be processed, by default. Create a custom list
