@@ -34,9 +34,16 @@ and statistics.
 You can find me at [GitHub](https://github.com/knorrfg) or write me an e-mail: 
 {{ site.email | mailObfuscate }}
 
+# My publications:
+
+* [PyParadigm—A Python Library to Build Screens in a Declarative Way](https://www.frontiersin.org/articles/10.3389/fninf.2019.00059/full)  
+    Knorr FG, Petzold J, Marxen M.  
+    Frontiers in Neuroinformatics 2019
+
+
 # My open source projects
 
-* **Pyparadigm** is a Pyhton library which allows to arrange and display visual
+* **Pyparadigm** is a Python library which allows to arrange and display visual
   stimuli and react to user-input with minimal amounts of source code in a 
   declarative manner.  
   [GitHub](https://github.com/knorrfg/pyparadigm) [Doc](https://pyparadigm.readthedocs.org)
