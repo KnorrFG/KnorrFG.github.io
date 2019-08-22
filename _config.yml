@@ -16,7 +16,10 @@
 title: Felix' Blog
 email: knorr.felix@gmx.de
 description: >- # this means to ignore newlines until "baseurl:"
-    A blog about programming, science, and everything else that I might come up with
+    A blog about programming, science, and everything else that I might come up
+    with.<br>
+    <a href="https://tinyletter.com/KnorrFG">
+        Subscribe for notification mails when I publish a new post</a>
 baseurl: "" # the subpath of your site, e.g. /blog
 url: "https://knorrfg.github.io" # the base hostname & protocol for your site, e.g. http://example.com
 logo: "/logo.png"
@@ -67,4 +70,7 @@ defaults:
 footer_links:
   - title: Feed
     url: feed.xml
-icon: fas fa-rss-square
+    icon: fas fa-rss-square
+  - title: Subscribe for updates by mail
+    url: https://tinyletter.com/KnorrFG
+    icon: fas fa-envelope
