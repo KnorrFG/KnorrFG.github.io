@@ -26,7 +26,7 @@ diploma thesis, and since in my PhD.
 </p>
 <p>
 I'm interested in programming, AI, statistics and neuroscience. Besides that
-I'm also interessted in neutrition and sports, and I love to play Pathfinder.</p>
+I'm also interested in nutrition and sports, and I love to play Pathfinder.</p>
 </div>
 You can find me at [GitHub](https://github.com/knorrfg) or write me an e-mail: 
 {{ site.email | mailObfuscate }}
