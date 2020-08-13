@@ -21,15 +21,12 @@ different programs in C++ for video recording, compression, and some
 lightweight analysis. During my intern semester, I developed a tool to ease
 analysis of electrical signals in animal nerves, and implemented a couple of
 time series analysis algorithms. During different practical works in the course
-of my study I worked a lot with Python, which I also have been using in my
+of my study, I worked a lot with Python, which I also have been using in my
 diploma thesis, and since in my PhD.
 </p>
 <p>
-My interests evolve a lot around improving as a programmer, including learning
-cool new techniques, libraries and tools. Additionally, I'm interested in
-machine learning (especially in algorithms that work well with small samples)
-and statistics.
-</p>
+I'm interested in programming, AI, statistics and neuroscience. Besides that
+I'm also interessted in neutrition and sports, and I love to play Pathfinder.</p>
 </div>
 You can find me at [GitHub](https://github.com/knorrfg) or write me an e-mail: 
 {{ site.email | mailObfuscate }}
@@ -40,6 +37,9 @@ You can find me at [GitHub](https://github.com/knorrfg) or write me an e-mail:
     Knorr FG, Petzold J, Marxen M.  
     Frontiers in Neuroinformatics 2019
 
+* [A comparison of fMRI and behavioral models for predicting inter-temporal choices](https://www.sciencedirect.com/science/article/pii/S105381192030121X)  
+  Felix G. Knorr, Philipp T. Neukam, Juliane H. Fröhner, Holger Mohr, Michael N.Smolka, Michael Marxen
+  NeuroImage 2020
 
 # My open source projects
 
@@ -51,3 +51,8 @@ You can find me at [GitHub](https://github.com/knorrfg) or write me an e-mail:
 * **Datasheet** is a python library which easily generates HTML pages containing
   Markdown text, pandas tables, matplotlib figures and nifti images.  
   [GitHub](https://github.com/knorrfg/datasheet) [Doc](https://datasheet.readthedocs.org)
+
+* **Markdown Note** is a small command line utility to manage notes. It can be
+	configured to use any editor and notes can be viewed as html using a
+	browser  
+	[GitHub](https://github.com/KnorrFG/markdown_note)
