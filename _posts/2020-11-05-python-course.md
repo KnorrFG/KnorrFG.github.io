@@ -1,6 +1,7 @@
 --- 
-title: A Python Class
+title: A Python Course
 categories: programming
+permalink: /python_course
 --- 
 
 Recenty I've been asked whether I could teach Python to a fellow PhD student
@@ -65,8 +66,16 @@ do data analysis, and this course is geared towards them.
    this later. However, there is quite some things left they need to know about
    Python at this point, and I'll sprinkle them in between practical exercises. 
    So the next thing to read is:
-   
     - [Mutable vs Immutable objects](https://towardsdatascience.com/https-towardsdatascience-com-python-basics-mutable-vs-immutable-objects-829a0cb1530a):
     - [(i)mutable arguments](https://riptutorial.com/python/example/28509/mutable-and-immutable-as-arguments)
     - [mutable default args](https://florimond.dev/blog/articles/2018/08/python-mutable-defaults-are-the-source-of-all-evil/)
 
+   To do some analysis, they should also read introductory tutorials for
+   [numpy](https://numpy.org/devdocs/user/quickstart.html) 
+   ([alternative, if no matlab
+   experience](https://www.tutorialspoint.com/numpy/index.htm)) and 
+   [pandas](https://pandas.pydata.org/pandas-docs/stable/user_guide/10min.html).
+   Last but not least, an environment is needed to do the analysis in. Most
+   people would probably recomend jupyter. I wrote a post about this topic for
+   this course: [An Introduction to Jupyter - and why I don't like
+   it](/why_no_jupyter)
