@@ -55,4 +55,4 @@ You can find me at [GitHub](https://github.com/knorrfg) or write me an e-mail:
 * **Markdown Note** is a small command line utility to manage notes. It can be
 	configured to use any editor and notes can be viewed as html using a
 	browser  
-	[GitHub](https://github.com/KnorrFG/markdown_note)
+	[GitHub](https://github.com/KnorrFG/markdown_note) [Article](/mdn)
